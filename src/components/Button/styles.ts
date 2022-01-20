@@ -7,7 +7,9 @@ type ContainerProps = {
   type: TypeProps;
 }
 
-export const Container = styled(RectButton)<ContainerProps>`
+export const Container = styled.TouchableOpacity.attrs(({
+    activeOpacity: Number(0.7),
+  }))<ContainerProps>`
   flex: 1;
   max-height: 56px;
   min-height: 56px;
