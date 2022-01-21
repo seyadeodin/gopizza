@@ -5,6 +5,14 @@
     "version": "1.0.0",
     "assetBundlePatterns": [
       "**/*"
+    ],
+    "plugin": [
+      [
+        "expo-image-picker",
+        {
+          "photoPermission": "The app access your photos to let you share them with your friends."
+        }
+      ]
     ]
   },
   "name": "gopizza"
