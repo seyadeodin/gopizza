@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-import { Platform, TouchableOpacity } from 'react-native';
+import { Alert, Platform, TouchableOpacity } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
+import firestore from '@react-native-firebase/firestore'
+import  storage from '@react-native-firebase/storage'
 
 import { ButtonBack } from '@components/ButtonBack';
 import { Photo } from '@components/Photo';
@@ -25,6 +27,13 @@ import { ScrollView } from 'react-native-gesture-handler';
 
 export function Product() {
   const [ image, setImage ] = useState('');
+  const [ name, setName ] = useState('');
+  const [ description, setDescription ] = useState('');
+  const [ priceSizeP,  setPriceSizeP ] = useState('');
+  const [ priceSizeM,  setPriceSizeM ] = useState('');
+  const [ priceSizeG,  setPriceSizeG ] = useState('');
+  const [ isLoading, setIsLoading ] = useState(false);
+
 
   async function handlePickerImage(){
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -39,6 +48,50 @@ export function Product() {
         setImage(result.uri)
       }
     }
+  }
+
+  async function handleAdd(){
+    if(!name.trim()){
+      return Alert.alert('Cadastro', 'Informe o nome da pizza');
+    }
+
+    if(!description.trim()){
+      return Alert.alert('Cadastro', 'Informe a descrição da pizza');
+    }
+
+    if(!priceSizeP || !priceSizeM || !priceSizeG){
+      return Alert.alert('Cadastro', 'Informe o preço de todos os tamanhos da pizza');
+    }
+
+    if (!image) {
+      return Alert.alert('Cadastro', 'Selecione a imagem da pizza');
+    }
+
+    setIsLoading(true);
+
+    const fileName = new Date().getTime();
+    const reference = storage().ref(`/pizzas/${fileName}.png`)
+
+    await reference.putFile(image);
+    const photo_url = await reference.getDownloadURL();
+
+    firestore()
+    .collection('pizzas')
+    .add({
+      name,
+      name_insensitive: name.toLowerCase().trim(),
+      description,
+      price_sizes: {
+        p: Number(priceSizeP),
+        m: Number(priceSizeM),
+        g: Number(priceSizeG),
+      },
+      photo_url,
+      photo_path: reference.fullPath
+    })
+    .then(() => Alert.alert('Cadastro', 'Pizza cadastrada com sucesso'))
+    .catch(() => Alert.alert('Cadastro', 'Não foi possível cadastrar a pizza'))
+    .finally(() => setIsLoading(false))
   }
 
   return(
@@ -66,7 +119,10 @@ export function Product() {
       <Form>
         <InputGroup>
           <Label>Nome</Label>
-          <Input/>
+          <Input
+            onChangeText={setName}
+            value={name}
+          />
         </InputGroup>
 
         <InputGroup>
@@ -78,6 +134,8 @@ export function Product() {
             multiline
             maxLength={60}
             style={{ height: 80}}
+            onChangeText={setDescription}
+            value={description}
           />
         </InputGroup>
 
@@ -85,17 +143,30 @@ export function Product() {
         <InputGroup>
           <Label>Tamanhos e preços</Label>
 
-          <InputPrice size="P" />
-          <InputPrice size="M" />
-          <InputPrice size="G" />
+          <InputPrice 
+            size="P" 
+            onChangeText={setPriceSizeP}
+            value={priceSizeP}  
+          />
+          <InputPrice 
+            size="M" 
+            onChangeText={setPriceSizeM}
+            value={priceSizeM}  
+          />
+          <InputPrice 
+            size="G" 
+            onChangeText={setPriceSizeG}
+            value={priceSizeG}  
+          />
         </InputGroup>
 
         <Button
           title="Cadastrar pizza"
+          isLoading={isLoading}
+          onPress={handleAdd}
         />
       </Form>
      
-
       </ScrollView>
     </Container>
   )
