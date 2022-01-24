@@ -10,6 +10,7 @@ import theme from './src/theme/index'
 
 import { SignIn } from '@screens/SignIn';
 import { Product } from '@screens/Product'
+import { Home } from '@screens/Home'
 
 export default function App() {
   const [fontsLoaded] = useFonts({
@@ -26,7 +27,7 @@ export default function App() {
     <ThemeProvider theme={theme}>
       <StatusBar style="light" translucent backgroundColor="transparent" />
       <AuthProvider>
-        <Product/>
+        <Home/>
       </AuthProvider>
     </ThemeProvider>
   );
