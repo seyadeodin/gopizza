@@ -3,6 +3,7 @@ import { Alert, TouchableOpacity, FlatList } from 'react-native';
 import { useTheme } from 'styled-components/native'
 import { MaterialIcons } from '@expo/vector-icons'
 import firestore from '@react-native-firebase/firestore'
+import { useNavigation } from '@react-navigation/native'
 
 import happyEmoji from '@assets/happy.png'
 
@@ -18,12 +19,14 @@ import {
   MenuHeader,
   MenuItemsNumber,
   Title,
+  NewProductButton,
 } from './styles';
 
 export function Home(){
   const [ pizzas, setPizzas ] = useState<ProductProps[]>([])
   const [ search, setSearch ] = useState('')
   const { COLORS } = useTheme();
+  const navigation = useNavigation();
 
   function fetchPizzas(value: string) {
     const formattedValue = value.toLowerCase().trim();
@@ -58,6 +61,14 @@ export function Home(){
     fetchPizzas('')
   }
 
+  function handleOpenCard(id: string){
+    navigation.navigate('product', { id });
+  }
+
+  function handleAddCard(){
+    navigation.navigate('product', {});
+  }
+
   useEffect(() => {
     fetchPizzas('')
   }, [])
@@ -90,13 +101,24 @@ export function Home(){
       <FlatList
         data={pizzas}
         keyExtractor={item => item.id}
-        renderItem={({item}) => <ProductCard data={item} />}
+        renderItem={({item}) => (
+          <ProductCard 
+            data={item} 
+            onPress={() => handleOpenCard(item.id)}
+          />
+          )}
         showsVerticalScrollIndicator={false}
         contentContainerStyle = {{
           paddingTop: 20,
           paddingBottom: 125,
           marginHorizontal: 24,
         }}
+      />
+
+      <NewProductButton 
+        title="Cadastrar pizza"
+        type="secondary"
+        onPress={handleAddCard}
       />
         
     </Container>
