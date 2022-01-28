@@ -108,7 +108,7 @@ export function Product() {
       photo_url,
       photo_path: reference.fullPath
     })
-    .then(() => Alert.alert('Cadastro', 'Pizza cadastrada com sucesso'))
+    .then(() => navigation.navigate('home'))
     .catch(() => Alert.alert('Cadastro', 'Não foi possível cadastrar a pizza'))
     .finally(() => setIsLoading(false))
   }
@@ -151,6 +151,39 @@ export function Product() {
     .catch(e => console.log(e))
   }
 
+  function handleDeleteCard(){
+    function deletePizza() {
+        storage()
+        .ref(photoPath)
+        .delete()
+        .then(() => {
+          firestore()
+          .collection('pizzas')
+          .doc(id)
+          .delete()
+          .then(() => navigation.navigate('home'))
+          .catch(() => Alert.alert('Erro ao excluír produto'))
+
+        })
+        .catch(e => Alert.alert('Erro ao excluir imagem'))
+    }
+
+    Alert.alert(
+      'Exclusão de produto',
+      'Tem certeza que deseja excluir este ítem',
+      [
+        {
+          text: 'Sim',
+          onPress: deletePizza
+        },
+        {
+          text: 'Cancelar',
+          style: 'cancel'
+        }
+      ]
+    )
+  }
+
   function handleGoBack(){
     navigation.goBack();
   }
@@ -182,12 +215,12 @@ export function Product() {
       <Header>
         <ButtonBack onPress={handleGoBack}/>
         <Title>Cadastrar</Title>
-        <TouchableOpacity>
-          { id ?
+        { id ?
+          <TouchableOpacity onPress={handleDeleteCard}>
             <DeleteLabel>Deletar</DeleteLabel>
-            : <View style={{width: 20}}/>
-          }
-        </TouchableOpacity>
+          </TouchableOpacity>
+          : <View style={{width: 20}}/>
+        }
       </Header>
 
       <Upload>
