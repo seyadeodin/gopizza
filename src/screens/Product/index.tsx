@@ -12,7 +12,7 @@ import { Photo } from '@components/Photo';
 import { InputPrice } from '@components/InputPrice';
 import { Input } from '@components/Input';
 import { Button } from '@components/Button';
-import { ProductProps } from '@src/components/ProductCard';
+import { ProductProps } from '@components/ProductCard';
 
 import { 
   Container, 
