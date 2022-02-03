@@ -16,7 +16,7 @@ export function SignIn() {
   const [password, setPassword] = useState('')
 
   function handleSignIn(){
-    signIn(email, password);
+    signIn(email.trim(), password);
   }
 
   function handleForgotPassword(){
