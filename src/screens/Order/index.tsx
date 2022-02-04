@@ -74,8 +74,9 @@ export function Order() {
       pizza: pizza.name,
       size,
       table_number: tableNumber,
-      waitder_id: user?.id,
-      image: pizza.photo_url
+      waiter_id: user?.id,
+      image: pizza.photo_url,
+      status: 'Preparando'
     })
     .then(() => navigation.navigate('home'))
     .catch(() => Alert.alert('Pedido', 'Não foi possível realizar o pedido.'))
