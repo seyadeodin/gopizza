@@ -9,7 +9,6 @@ import {
   Header,
   Title,
 } from './styles';
-import { ScrollView } from 'react-native-gesture-handler';
 
 export function Orders(){
   return(
